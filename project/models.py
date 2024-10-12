@@ -1,9 +1,13 @@
 from django.db import models
 from django.utils import timezone
 
-# Create your models here.
+class ActiveManager(models.Manager):
+    # Project.objects.get_queryset() === Project.objects.all()
+    def get_queryset(self):
+        return (
+            super().get_queryset().filter(status=Project.Status.ACTIVE)
+        )
 class Project(models.Model):
-
     class Status(models.TextChoices):
         NOT_STARTED = 'NOS','Not Started'
         ACTIVE = 'ACT','Active'
@@ -23,9 +27,13 @@ class Project(models.Model):
         choices = Status.choices,
         default=Status.NOT_STARTED
     )
+    active = ActiveManager()
+    objects = models.Manager()
 
     def __str__(self):
         return f'{self.name}-{self.status}'
     class Meta:
         ordering = ['-startDate']
-        indexes = ['-startDate']
+        indexes = [
+            models.Index(fields=['-startDate'],)
+        ]
