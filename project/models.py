@@ -27,8 +27,8 @@ class Project(models.Model):
         choices = Status.choices,
         default=Status.NOT_STARTED
     )
-    active = ActiveManager()
     objects = models.Manager()
+    active = ActiveManager()
 
     def __str__(self):
         return f'{self.name}-{self.status}'
